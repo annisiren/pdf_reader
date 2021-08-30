@@ -1,3 +1,9 @@
+# Custom files
+files/
+pdf_to_text/
+other_scripts/
+
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
