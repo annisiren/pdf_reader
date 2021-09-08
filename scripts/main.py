@@ -9,11 +9,18 @@ import os
 start_time = time.time()
 read_path = os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..', 'files'))
 write_path = os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..', 'pdf_to_text'))
+to_read = os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..', 'files\\files.txt'))
 
-def read_folder():
+def read_folder(file_name):
     # TODO:
     # 1. Automate read files from folder
-    count = 0
+    # Works for 1 file in files.txt
+    with open(file_name) as f:
+        # f.readlines()
+        file = ''.join(f.readlines()).strip()
+
+    # input("Press enter to continue...")
+    return file
 
 def read_file(file_name):
     pdffileobj=open(file_name,'rb')
@@ -37,7 +44,7 @@ def write_file_dict(file_name, text):
     with open(file_name, 'wb') as f:
         pickle.dump(text, f, pickle.HIGHEST_PROTOCOL)
 
-str_text = read_file(read_path+'\\Books\\[Approaching the Ancient World] Dowden - USES GREEK MYTHOLOGY CL (Approaching the Ancient World) (1992, Other) - libgen.lc.pdf')
+str_text = read_file(read_path+read_folder(to_read))
 
 # read_file(r'C:\Users\Anni\Desktop\Mythology\Books\\[Approaching the Ancient World] Dowden - USES GREEK MYTHOLOGY CL (Approaching the Ancient World) (1992, Other) - libgen.lc.pdf')
 
