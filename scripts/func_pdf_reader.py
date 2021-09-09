@@ -73,7 +73,7 @@ def parse_toc(file_path, maxlevel):
                 current_title = title
             elif level == 2:
                 toc_chapter_list.append(title)
-    # print(toc)
+    # print(toc_chapter_list)
     # input("Press enter to continue...")
     return toc_dict, toc_part_list, toc_chapter_list
 
@@ -102,6 +102,7 @@ def convert_pdf_to_string(file_path, toc_dict, toc_part_list, toc_chapter_list):
         last_part = ''
         for i, page in enumerate(PDFPage.create_pages(doc)):
             page_number =i+1
+            print("Page: ",page_number)
             interpreter.process_page(page)
             org_content = page_cleanup(output_string.getvalue())
             output_string.seek(0)
@@ -109,6 +110,58 @@ def convert_pdf_to_string(file_path, toc_dict, toc_part_list, toc_chapter_list):
 
             content, tagged_content, counter_content = content_cleanup(org_content)
             index_change, chapter_change, true_page_number = content_analysis(content)
+
+            if current_part == '':
+                for j, value in enumerate(toc_part_list):
+                    if value in org_content:
+                        print(value)
+                        current_part = value
+                        del toc_part_list[0:j+1]
+                        break
+            else:
+                # print("------------------------")
+                # print("current_part: ",current_part)
+                # print("    content[0]: ",content[0])
+                # print("    toc_part_list[0].lower(): ",toc_part_list[0].lower())
+                # print()
+                # print("------------------------")
+                toc_part_list_test = toc_part_list[0].strip().lower()
+                # print("toc_part_list_test: ",toc_part_list_test)
+                # print(len(toc_part_list[0].strip().lower())+1)
+                sub_len = len(toc_part_list[0].strip().lower())
+                sub_name = org_content.replace("\n"," ").lower().strip()[0:sub_len]
+                # print(toc_part_list[0].lower())
+                # print(len(toc_part_list[0].lower()))
+                # print(sub_name)
+                # print("------------------------")
+                # input("Press enter to continue...")
+                # if toc_part_list[0].lower() == content[0]:
+                #     print("CURRENT PART 1")
+                #     current_part = content[0]
+                #     del toc_part_list[0]
+
+                if toc_part_list[0].lower() == sub_name:
+                    # print("CURRENT PART 2")
+                    current_part = toc_part_list[0].lower()
+                    del toc_part_list[0]
+
+
+            if toc_chapter_list[0].lower()  in org_content.lower():
+                current_chapter = toc_chapter_list[0].lower()
+                del toc_chapter_list[0]
+                # print("Current chapter")
+                # print(current_chapter)
+
+            try:
+                print('######################')
+                print("current_part: ",current_part)
+                print("current_chapter: ",current_chapter)
+                print("content[0]: ",content[0])
+                print("toc_part_list[0] ",toc_part_list[0])
+                print('######################')
+            except:
+                pass
+            # print(org_content)
 
             # for value in toc_dict:
             #     if value in org_content and value is not current_part:
@@ -132,58 +185,58 @@ def convert_pdf_to_string(file_path, toc_dict, toc_part_list, toc_chapter_list):
             #             print("----Page number: ", count)
             #             break
 
-            
+
 
             page_obj = Page(count, true_page_number, org_content, content, tagged_content, counter_content, '', '', index, part, chapter)
             pages.update({count:page_obj})
 
-            if current_part in toc_part_list:
-                print("TEST")
-                print(current_part)
-                print("PREVIOUS")
-                print(toc_part_list[toc_part_list.index(current_part)-1])
-                print("NEXT")
-                print(toc_part_list[toc_part_list.index(current_part)+1])
-
-            if current_chapter in toc_chapter_list:
-                print("TEST 2")
-                print(current_chapter)
-                print("PREVIOUS")
-                print(toc_chapter_list[toc_chapter_list.index(current_chapter)-1])
-                print("NEXT")
-                print(toc_chapter_list[toc_chapter_list.index(current_chapter)+1])
-
-            if current_part != last_part and last_part !='':
-                print("Current Part:", current_part)
-                print("Previous Part: ", last_part)
-            #     parts[last_part].end_page = count-1
-            #     parts[last_part].chapters = chapters
-            #     print("--Name: ",parts[last_part].name)
-            #     print("--Start: ", parts[last_part].start_page)
-            #     print("--End: ", parts[last_part].end_page)
-            #     chapters = {}
+            # if current_part in toc_part_list:
+            #     print("TEST")
+            #     print(current_part)
+            #     print("PREVIOUS")
+            #     print(toc_part_list[toc_part_list.index(current_part)-1])
+            #     print("NEXT")
+            #     print(toc_part_list[toc_part_list.index(current_part)+1])
             #
-            if current_chapter != last_chapter and last_chapter != '':
-                print("Current Chapter: ", current_chapter)
-                print("Previous Chapter: ", last_chapter)
-            #     chapters[last_chapter].end_page  = count-1
-            #     chapters[last_chapter].pages = pages
+            # if current_chapter in toc_chapter_list:
+            #     print("TEST 2")
+            #     print(current_chapter)
+            #     print("PREVIOUS")
+            #     print(toc_chapter_list[toc_chapter_list.index(current_chapter)-1])
+            #     print("NEXT")
+            #     print(toc_chapter_list[toc_chapter_list.index(current_chapter)+1])
             #
-            #     print("--Name: ",chapters[last_part].name)
-            #     print("--Start: ", chapters[last_part].start_page)
-            #     print("--End: ", chapters[last_part].end_page)
-            #     pages = {}
+            # if current_part != last_part and last_part !='':
+            #     print("Current Part:", current_part)
+            #     print("Previous Part: ", last_part)
+            # #     parts[last_part].end_page = count-1
+            # #     parts[last_part].chapters = chapters
+            # #     print("--Name: ",parts[last_part].name)
+            # #     print("--Start: ", parts[last_part].start_page)
+            # #     print("--End: ", parts[last_part].end_page)
+            # #     chapters = {}
+            # #
+            # if current_chapter != last_chapter and last_chapter != '':
+            #     print("Current Chapter: ", current_chapter)
+            #     print("Previous Chapter: ", last_chapter)
+            # #     chapters[last_chapter].end_page  = count-1
+            # #     chapters[last_chapter].pages = pages
+            # #
+            # #     print("--Name: ",chapters[last_part].name)
+            # #     print("--Start: ", chapters[last_part].start_page)
+            # #     print("--End: ", chapters[last_part].end_page)
+            # #     pages = {}
+            #
+            # if current_part != last_part and last_part == '':
+            #     print("Current Part:", current_part)
+            #     print("Previous Part: ", last_part)
+            #     last_part = current_part
+            # if current_chapter != last_chapter and last_chapter == '':
+            #     print("Current Chapter: ", current_chapter)
+            #     print("Previous Chapter: ", last_chapter)
+            #     last_chapter = current_chapter
 
-            if current_part != last_part and last_part == '':
-                print("Current Part:", current_part)
-                print("Previous Part: ", last_part)
-                last_part = current_part
-            if current_chapter != last_chapter and last_chapter == '':
-                print("Current Chapter: ", current_chapter)
-                print("Previous Chapter: ", last_chapter)
-                last_chapter = current_chapter
-
-            last_chapter = current_chapter
+            # last_chapter = current_chapter
             count +=1
             input("Press enter to continue...")
     return(output_string.getvalue(), pages)

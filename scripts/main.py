@@ -18,8 +18,6 @@ def read_folder(file_name):
     with open(file_name) as f:
         # f.readlines()
         file = ''.join(f.readlines()).strip()
-
-    # input("Press enter to continue...")
     return file
 
 def read_file(file_name):
@@ -46,7 +44,6 @@ def write_file_dict(file_name, text):
 
 str_text = read_file(read_path+read_folder(to_read))
 
-# read_file(r'C:\Users\Anni\Desktop\Mythology\Books\\[Approaching the Ancient World] Dowden - USES GREEK MYTHOLOGY CL (Approaching the Ancient World) (1992, Other) - libgen.lc.pdf')
 
 
 # write_file(write_path+'\\test_redo.txt', str_text)
