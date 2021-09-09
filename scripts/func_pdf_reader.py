@@ -117,50 +117,71 @@ def convert_pdf_to_string(file_path, toc_dict, toc_part_list, toc_chapter_list):
                         print(value)
                         current_part = value
                         del toc_part_list[0:j+1]
+                        part_start_page = count
+                        part_obj = Part(part_start_page, 0, current_part, '')
+                        parts.update({current_part:part_obj})
+                        print("New Part: ")
+                        print("    Page number: ", count)
+                        print("    Part name: ",current_part)
                         break
             else:
-                # print("------------------------")
-                # print("current_part: ",current_part)
-                # print("    content[0]: ",content[0])
-                # print("    toc_part_list[0].lower(): ",toc_part_list[0].lower())
-                # print()
-                # print("------------------------")
-                toc_part_list_test = toc_part_list[0].strip().lower()
-                # print("toc_part_list_test: ",toc_part_list_test)
-                # print(len(toc_part_list[0].strip().lower())+1)
                 sub_len = len(toc_part_list[0].strip().lower())
                 sub_name = org_content.replace("\n"," ").lower().strip()[0:sub_len]
-                # print(toc_part_list[0].lower())
-                # print(len(toc_part_list[0].lower()))
-                # print(sub_name)
-                # print("------------------------")
-                # input("Press enter to continue...")
-                # if toc_part_list[0].lower() == content[0]:
-                #     print("CURRENT PART 1")
-                #     current_part = content[0]
-                #     del toc_part_list[0]
 
                 if toc_part_list[0].lower() == sub_name:
-                    # print("CURRENT PART 2")
+                    last_part = current_part
                     current_part = toc_part_list[0].lower()
                     del toc_part_list[0]
 
+                    part_start_page = count
+                    part_obj = Part(part_start_page, 0, current_part, '')
+                    parts.update({current_part:part_obj})
+                    parts[last_part].end_page = count-1
 
-            if toc_chapter_list[0].lower()  in org_content.lower():
+                    print("New Part: ")
+                    print("    Page number: ", count)
+                    print("    Part name: ",current_part)
+                    print("Last Part: ", last_part)
+                    print("     Parts: ", parts[last_part].name)
+                    print("     End page: ", parts[last_part].end_page)
+                # TODO Add last page for last part aka last page of book
+
+            if current_chapter == '' and toc_chapter_list[0].lower()  in org_content.lower():
                 current_chapter = toc_chapter_list[0].lower()
                 del toc_chapter_list[0]
-                # print("Current chapter")
-                # print(current_chapter)
 
-            try:
-                print('######################')
-                print("current_part: ",current_part)
-                print("current_chapter: ",current_chapter)
-                print("content[0]: ",content[0])
-                print("toc_part_list[0] ",toc_part_list[0])
-                print('######################')
-            except:
-                pass
+                chapter_start_page = count
+                chapter_obj = Chapter(chapter_start_page, 0, current_chapter, '')
+                chapters.update({current_chapter:chapter_obj})
+
+            elif toc_chapter_list[0].lower()  in org_content.lower():
+                last_chapter = current_chapter
+                current_chapter = toc_chapter_list[0].lower()
+                del toc_chapter_list[0]
+
+                chapter_start_page = count
+                chapter_obj = Chapter(chapter_start_page, 0, current_chapter, '')
+                chapters.update({current_chapter:chapter_obj})
+                parts[last_chapter].end_page = count-1
+
+                print("New Chapter: ")
+                print("    Page number: ", count)
+                print("    Part name: ",current_part)
+                print("Last Chapter: ", last_chapter)
+                print("     Parts: ", parts[last_chapter].name)
+                print("     End page: ", parts[last_chapter].end_page)
+
+                # TODO Add last page for last chapter
+
+            # try:
+            #     print('######################')
+            #     print("current_part: ",current_part)
+            #     print("current_chapter: ",current_chapter)
+            #     print("content[0]: ",content[0])
+            #     print("toc_part_list[0] ",toc_part_list[0])
+            #     print('######################')
+            # except:
+            #     pass
             # print(org_content)
 
             # for value in toc_dict:
